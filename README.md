@@ -21,7 +21,7 @@ Clone the repository and switch to the appropriate branch:
 
 ```bash
 git clone https://github.com/dt-lindberg/LIPS-ARC-Project.git
-cd MoL-ARC-AGI
+cd LIPS-ARC-Project
 ```
 
 ### Step 3: Install Dependencies
