@@ -1,18 +1,70 @@
 ![image](https://raw.githubusercontent.com/da-fr/arc-prize-2024/master/.github/overview.png)
 
-## To run on Snellius
+# Run on Snellius
+
+Instructions to set up and run the evaluation pipeline on Snellius.
+
+---
+
+## 1. **Set Up the Environment**
+
+### Step 1: Create a New Directory
+From the `$HOME` directory (the default session start location on Snellius), create a new directory and navigate into it:
+
+```bash
+mkdir lost_in_program_space
+cd lost_in_program_space
+```
+
+### Step 2: Clone the Repository
+Clone the repository and switch to the appropriate branch:
+
+```bash
 git clone -b code-from-dennis https://github.com/nedekriek/MoL-ARC-AGI
+cd MoL-ARC-AGI
+```
 
+### Step 3: Install Dependencies
+Install the required dependencies on a compute node:
 
-Under `training_code`, you can find our locally executable code that we used to prepare our models. The main entry points are named `run_finetuning_[model].py` for initial finetuning or `run_evaluation_[model].py` for starting an inference run with test-time-training, simulating a kaggle submission. In either case, we first load model and data, then augment our dataset. Afterwards a training run starts. In the latter case, the resulting model is evaluated using our augmentation and scoring strategies. Our training code requires the `unsloth` package and its dependencies to be installed. For evaluation, the `diskcache` package is required for caching the results of inference and score calculation.
+```bash
+sbatch install_dependencies.sh
+```
 
-For retraining our winning submission's base model scoring 53.5 points in the Kaggle ARC Prize 2024 Contest, run the `run_finetune_Nemo-full.py`. The datasets used in the training process must be placed in the input folder (see the beginning of the run-file itself for details). The trained model is also available for download on huggingface as [Mistral-NeMo-Minitron-8B-ARChitects-Full-bnb-4bit](https://huggingface.co/da-fr/Mistral-NeMo-Minitron-8B-ARChitects-Full-bnb-4bit).
+This command will create two new Conda environments, one for the induction model and one for the transduction model. These environments are automatically activated and deactivated during a run.
 
-Under `kaggle_notebooks`, you can find our notebooks for kaggle. The notebook `arc-prize-2024_kaggle.ipynb` contains the original kaggle submission scoring `53.5` points on the hidden test set. As the competition did not allow internet access, this notebook uses an offline dataset containing various python wheels (which can be created by executing the notebook `unsloth-download-2024-9-post4.ipynb` and creating a dataset from its output). This notebook, including the offline python wheel dataset and the pretrained model, is also available directly [on kaggle](https://www.kaggle.com/code/dfranzen/arc-prize-2024-solution-by-the-architects). The notebook `arc-prize-2024_updated.ipynb` contains an updated version which can download the required packages directly from the internet using pip, and can also be run locally in jupyter (this requires the `unsloth` package to be installed).
+---
 
-We trained all our models on a single `Nvidia H100` GPU. If you run into memory problems, we suggest reducing batch size and/or the `max_tokens` value. Using a batch size of `2` should allow finetuning `Mistral-NeMo-Minitron-8B-Base` on GPUs with 24 GB memory.
+## 2. **Run the Evaluation Pipeline**
 
-Here is a rough overview of our files and classes:
+Once the dependencies are installed, execute the evaluation pipeline with:
+
+```bash
+sbatch run_evaluation.sh
+```
+
+This command will run the pipeline using the following SLURM settings:
+
+```bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --partition=gpu_a100
+#SBATCH --time=12:00:00
+```
+
+---
+
+## 3. **Locate the Results**
+
+After the pipeline finishes running, the results will be saved in a `submission.json` file, located in the following directory:
+
+```
+$HOME/lost_in_program_space/MoL-ARC-AGI/output_evaluation_Llama-rearc_with_ttt
+```
+
+---
 
 ## Files
 
@@ -71,4 +123,3 @@ Here is a rough overview of our files and classes:
 ## License
 
 Our code is available under the Apache 2.0 license. See the [LICENSE.txt](LICENSE.txt) file for more info.
-
