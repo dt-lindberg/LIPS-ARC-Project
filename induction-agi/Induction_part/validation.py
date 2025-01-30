@@ -27,6 +27,8 @@ def compare_grids(output_grid, expected_output_grid):
     if np.array_equal(output_grid, expected_output_grid):
         return GridComparisonResult.EQUAL, 1.0
     
+    
+    
     # If shapes match but content doesn't, calculate the ratio of matching elements
     ratio = np.sum(output_grid == expected_output_grid) / np.prod(expected_output_grid.shape)
     return GridComparisonResult.CONTENT_MISMATCH, ratio
@@ -37,6 +39,7 @@ def multi_validate(arc_problem, codes):
     # first execute the first input for each code to filter, leave only the correct ones
     
     results = [list() for _ in range(len(codes))]
+    grid_size_results = [True for _ in range(len(codes))]
     pairs = arc_problem.train_pairs + arc_problem.test_pairs
     for pair_idx in range(len(pairs)):
         input_grid = pairs[pair_idx].x
@@ -58,20 +61,23 @@ def multi_validate(arc_problem, codes):
                 results[code_idx].append((comparison_result == GridComparisonResult.EQUAL, ratio))
             elif comparison_result == GridComparisonResult.SHAPE_MISMATCH:
                 results[code_idx].append((comparison_result == GridComparisonResult.EQUAL, ratio))
+                grid_size_results[code_idx] = False
             elif comparison_result == GridComparisonResult.CONTENT_MISMATCH:
                 results[code_idx].append((comparison_result == GridComparisonResult.EQUAL, ratio))
             else:
                 results[code_idx].append((None, 0.0))
+                grid_size_results[code_idx] = False
 
         assert len(results) == len(codes)
 
-    return results, output_grids
+    return results, output_grids, grid_size_results
 
 def validate(arc_problem, code, TRANSPOSE=False):
     failure = False
 
     return_output_grids = []
     train_verdict = False
+    grid_size_failure = False
     for idx, train_pair in enumerate(arc_problem.train_pairs + arc_problem.test_pairs):
         
         if failure: break
@@ -115,14 +121,10 @@ def validate(arc_problem, code, TRANSPOSE=False):
             elif comparison_result == GridComparisonResult.TYPE_MISMATCH:
                 print("\t\t[-] output is not a numpy array")
             elif comparison_result == GridComparisonResult.SHAPE_MISMATCH:
-                print(f"\t\t[-] output shape does not match expected shape: {output_grid.shape} vs {expected_output_grid.shape}")
+                print(f"\t\t[-] output shape does not match expected shape: {output_grid.shape} vs {expected_output_grid.shape}") 
+                grid_size_failure = True
             elif comparison_result == GridComparisonResult.CONTENT_MISMATCH:
                 print(f"\t\t[-] comparison failed, ratio of correct elements: {ratio}")
 
     if not failure: print(f"\t[+] passed")
-
-    # if not failure and not train_verdict:
-    #     print("something wrong")
-    #     exit()
-
-    return (train_verdict, not failure, return_output_grids)
+    return (train_verdict, not failure, return_output_grids, grid_size_failure)

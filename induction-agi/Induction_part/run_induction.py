@@ -11,6 +11,7 @@ import numpy as np
 import os
 import argparse
 import pathlib
+from collections import Counter
 
 
 ##################################
@@ -82,6 +83,12 @@ problems = load_data(folder_path, mode)
 ##################################
 # Inference
 ##################################
+def most_frequent_element(lst):
+    if not lst:
+        return None
+    counter = Counter(lst)
+    most_common_element, _ = counter.most_common(1)[0]
+    return most_common_element
 
 def get_arc_problem(uid):
     for problem in train_problems + validation_problems:
@@ -175,12 +182,14 @@ def execute_evaluate():
 
     os.makedirs("results", exist_ok=True)
     saving_file_answer = 'results/induction_results.json'
+    grid_size_suggestion_file = 'results/induction_grid_size_suggestion.json'
     # get just the filename
     saving_file_answer = pathlib.Path(saving_file_answer).name 
     saving_file_answer = pathlib.Path("results") / saving_file_answer
     print(f"Saving to {saving_file_answer}")
 
     problem_that_works_on_training_examples = dict()
+    problem_that_has_a_grid_size_prediction = dict()
     for problem_idx, p in enumerate(tqdm(problem_answers)):
         uid = p["uid"]
         responses = p["responses"]
@@ -201,14 +210,13 @@ def execute_evaluate():
 
 
         train_verdicts = []
+        grid_size_prediction = []
 
         ##################################
         # The eval mode, Program filtering
         ##################################
 
-        results, output_grids = multi_validate(arc_problem, codes)
-        promising_code = []
-        promising_code_num = 0
+        results, output_grids, grid_size_result = multi_validate(arc_problem, codes)
         for idx, result in enumerate(results):
                 assert len(result) == len(arc_problem.train_pairs + arc_problem.test_pairs)
                 train_verdict = all([verdict for verdict, _ in result[:len(arc_problem.train_pairs)]])
@@ -232,9 +240,15 @@ def execute_evaluate():
                     output_grid = numpy_to_nested_list(output_grid)
                     problem_that_works_on_training_examples[uid] = [{'attempt_1': output_grid, 'attempt_2': output_grid}]
                     break
-                if min_ratio > debug_threshold and promising_code_num<=3:
-                    promising_code_num += 1
-                    promising_code.append(codes[idx])
+                elif grid_size_result[idx]:
+                    print("The code fails but gets all grid size in training correct") 
+                    size = tuple(np.shape(output_grid))
+                    grid_size_prediction.append(size)
+
+        problem_that_has_a_grid_size_prediction[uid] = most_frequent_element(grid_size_prediction)
+
+
+
                 
 
         # if any(train_verdicts):
@@ -267,6 +281,9 @@ def execute_evaluate():
     print(f"Savings to {saving_file_answer}")
     with open(saving_file_answer, "w") as f:
         f.write(json.dumps(problem_that_works_on_training_examples))
+    print(f"Saving grid size suggestion to {grid_size_suggestion_file}")
+    with open(grid_size_suggestion_file, "w") as f:
+        f.write(json.dumps(problem_that_has_a_grid_size_prediction))
 
 
 # Let's go!
