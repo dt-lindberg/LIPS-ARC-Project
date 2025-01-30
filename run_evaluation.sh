@@ -17,7 +17,7 @@ module load Anaconda3/2024.06-1
 source activate lips_env2
 
 # Set working directory for induction
-cd $HOME/lost_in_program_space/MoL-ARC-AGI/induction-agi
+cd $HOME/lost_in_program_space/LIPS-ARC-Project/induction-agi
 
 # Logging info
 echo "Starting job at $(date)"
@@ -32,18 +32,18 @@ echo "Induction model finished at $(date)"
 cd "$TMPDIR" # $TMPDIR is set to /scratch-local/username
 
 # Copy transduction data to local scratch
-if cp -r $HOME/lost_in_program_space/MoL-ARC-AGI/data "$TMPDIR"; then
-    echo "data copied to scratch: $HOME/lost_in_program_space/MoL-ARC-AGI/data --> $TMPDIR/data"
+if cp -r $HOME/lost_in_program_space/LIPS-ARC-Project/data "$TMPDIR"; then
+    echo "data copied to scratch: $HOME/lost_in_program_space/LIPS-ARC-Project/data --> $TMPDIR/data"
 else
-    echo "Error: Failed to copy data from $HOME/lost_in_program_space/MoL-ARC-AGI/data to $TMPDIR"
+    echo "Error: Failed to copy data from $HOME/lost_in_program_space/LIPS-ARC-Project/data to $TMPDIR"
     exit 1
 fi
 
 # Copy induction results to local scratch
-if cp -r $HOME/lost_in_program_space/MoL-ARC-AGI/induction-agi/results "$TMPDIR"; then
-    echo "data copied to scratch: $HOME/lost_in_program_space/MoL-ARC-AGI/induction-agi/results --> $TMPDIR/results"
+if cp -r $HOME/lost_in_program_space/LIPS-ARC-Project/induction-agi/results "$TMPDIR"; then
+    echo "data copied to scratch: $HOME/lost_in_program_space/LIPS-ARC-Project/induction-agi/results --> $TMPDIR/results"
 else
-    echo "Error: Failed to copy data from $HOME/lost_in_program_space/MoL-ARC-AGI/induction-agi/results to $TMPDIR"
+    echo "Error: Failed to copy data from $HOME/lost_in_program_space/LIPS-ARC-Project/induction-agi/results to $TMPDIR"
     exit 1
 fi
 
@@ -53,7 +53,7 @@ conda deactivate
 conda activate lips_env
 
 # Run the python script
-srun python $HOME/lost_in_program_space/MoL-ARC-AGI/training_code/run_evaluation_Llama-rearc_with_ttt.py
+srun python $HOME/lost_in_program_space/LIPS-ARC-Project/training_code/run_evaluation_Llama-rearc_with_ttt.py
 
 # Copy output directory from scratch back to desired directory
-cp -r output_evaluation_Llama-rearc_with_ttt $HOME/lost_in_program_space/MoL-ARC-AGI
+cp -r output_evaluation_Llama-rearc_with_ttt $HOME/lost_in_program_space/LIPS-ARC-Project
