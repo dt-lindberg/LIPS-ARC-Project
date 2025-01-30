@@ -61,7 +61,7 @@ This command will run the pipeline using the following SLURM settings:
 After the pipeline finishes running, the results will be saved in a `submission.json` file, located in the following directory:
 
 ```
-$HOME/lost_in_program_space/MoL-ARC-AGI/output_evaluation_Llama-rearc_with_ttt
+$HOME/lost_in_program_space/LIPS-ARC-Project/output_evaluation_Llama-rearc_with_ttt
 ```
 
 ---
