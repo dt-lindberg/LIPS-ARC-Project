@@ -12,7 +12,7 @@
 module load 2024
 module load Anaconda3/2024.06-1
 
-cd $HOME/lost_in_program_space/MoL-ARC-AGI
+cd $HOME/lost_in_program_space/LIPS-ARC-Project
 
 # Install both conda environments
 conda env create -f environment.yml
