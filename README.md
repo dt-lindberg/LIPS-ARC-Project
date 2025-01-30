@@ -20,7 +20,7 @@ cd lost_in_program_space
 Clone the repository and switch to the appropriate branch:
 
 ```bash
-git clone -b code-from-dennis https://github.com/nedekriek/MoL-ARC-AGI
+git clone https://github.com/dt-lindberg/LIPS-ARC-Project.git
 cd MoL-ARC-AGI
 ```
 
