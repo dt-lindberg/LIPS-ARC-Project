@@ -1,5 +1,31 @@
 ![image](https://raw.githubusercontent.com/da-fr/arc-prize-2024/master/.github/overview.png)
 
+# The ARC project for group Lost in Program Space
+
+This is the repo for the submisssion of the arc project for group Lost in Program Space, in the January project [Program induction and the ARC challenge](https://msclogic.illc.uva.nl/current-students/courses/projects/project/231/1st-Semester-2024-25-Program-induction-and-the-ARC-challenge) supervised by [Dr. Fausto Carss](https://faustocarcassi.com/). Our architecture breaks down to the induction part and the transduction part. We eventually ran our program on the first hundred problems in the evaluation problems, due to the test submission being closed for 2024. The final results is as the following:
+
+|| Tasks solved      | Applied on | Accuracy |
+| ----------- | ----------- | ------- | ------ |
+| Induction model      | 2       | 9 | 77.8% |
+| Transduction model   | 49.5      | 91 | 54.4% |
+| Combined model | 56.5 | 100 | 56.5% |
+
+
+The LIPS_reports.pdf is our technical report, please check it out for discussion of our result.
+
+---------
+# Acknowledgemet
+Our induction model
+is adapted from model from the model 🤗[barc0/Llama-3.1-ARC-Potpourri-Induction-8B](https://huggingface.co/barc0/Llama-3.1-ARC-Potpourri-Induction-8B) developed by 
+W.-D. Li, K. Hu, C. Larsen, Y. Wu, S. Alford, C. Woo, S. M. Dunn, H. Tang, M. Naim,
+D. Nguyen, W.-L. Zheng, Z. Tavares, Y. Pu, and K. Ellis, “Combining Induction and
+Transduction for Abstract Reasoning” Dec. 2024. arXiv:2411.02272.
+
+Our transduction model and architecture is adapted from the model model [wb55L_nemomini_fulleval](https://www.kaggle.com/models/dfranzen/wb55l_nemomini_fulleval/Transformers/default/1) given by D. Franzen, J. Disselhoff, and D. Hartmann, “The LLM ARChitect: Solving ARC-
+AGI Is A Matter of Perspective”.
+
+-----------
+
 # Run on Snellius
 
 Instructions to set up and run the evaluation pipeline on Snellius.
